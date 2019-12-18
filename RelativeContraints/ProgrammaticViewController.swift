@@ -22,15 +22,60 @@ class ProgrammaticViewController: UIViewController {
     var blueViewCenterXConstraint: NSLayoutConstraint!
     var blueViewCenterYConstraint: NSLayoutConstraint!
     
+    var shouldAddHexagon = true
+    
+    @IBOutlet weak var hexagonsSwitch: UISwitch!
+    
+    @IBAction func toggleHexagons(_ sender: Any) {
+        if let sender = sender as? UISwitch {
+            shouldAddHexagon = sender.isOn
+            self.view.setNeedsLayout()
+        }
+    }
+    
+    func updateHexagon(to view: UIView, color: UIColor) {
+        view.subviews.forEach { (subview) in
+            subview.removeFromSuperview()
+        }
+        
+        if shouldAddHexagon {
+        
+            let config = UIImage.SymbolConfiguration(pointSize: view.frame.size.width, weight: .light)
+            guard let hexagonImage = UIImage(systemName: "hexagon", withConfiguration: config),
+                  let cgImage = hexagonImage.cgImage else { return }
+            
+            let rotatedImage = UIImage(cgImage: cgImage, scale: hexagonImage.scale, orientation: .right).withRenderingMode(.alwaysTemplate)
+            let imageView = UIImageView(image: rotatedImage)
+            imageView.tintColor = color
+            view.addSubview(imageView)
+            
+            imageView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+            imageView.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
+            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+
+            view.backgroundColor = .clear
+        } else {
+            view.backgroundColor = color
+        }
+        
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        blueViewCenterXConstraint.constant = blueView.frame.size.width - blueView.frame.size.width*0.1
-        blueViewCenterYConstraint.constant = blueView.frame.size.height/2 + blueView.frame.size.height*0.1
+        blueViewCenterXConstraint.constant = blueView.frame.size.width * 0.9
+        blueViewCenterYConstraint.constant = blueView.frame.size.height * 0.5
+        
+        updateHexagon(to: redView, color: .systemRed)
+        updateHexagon(to: blueView, color: .systemBlue)
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        hexagonsSwitch.isOn = shouldAddHexagon
+        
         redView.backgroundColor = .systemRed
         redView.translatesAutoresizingMaskIntoConstraints = false
         
