@@ -46,6 +46,7 @@ class ProgrammaticViewController: UIViewController {
             
             let rotatedImage = UIImage(cgImage: cgImage, scale: hexagonImage.scale, orientation: .right).withRenderingMode(.alwaysTemplate)
             let imageView = UIImageView(image: rotatedImage)
+            imageView.translatesAutoresizingMaskIntoConstraints = false
             imageView.tintColor = color
             view.addSubview(imageView)
             
